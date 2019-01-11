@@ -33,6 +33,11 @@ cc.Class({
             type: cc.Node,
         },
 
+        nodeCloud: {
+            default: null,
+            type: cc.Node
+        },
+
 
         // tilesHorizontalCount: {
         //     default: 0,
@@ -126,6 +131,11 @@ cc.Class({
 
         //虽然很迷你，但本质上就是战争迷雾系统
         this.fogOfWarSystem();
+        //调用草地变色，与自动描边
+        this.grassSystem();
+        //云特效
+        this.cloudEffect();
+
         //debugger;
         let self = this;
         //只专注于移动摄像机，其它的触摸由各自节点接收并吞没
@@ -161,9 +171,24 @@ cc.Class({
     },
 
 
+
+    cloudEffect: function () {
+        //云特效：上下自动
+        for (let i = 0; i < this.nodeCloud.children.length; ++i) {
+            let nodeN = this.nodeCloud.children[i];
+            let randY = Math.random() * 40 + 15;
+
+            var spawn1 = cc.spawn(cc.moveBy(2.5 + Math.random() * 2, cc.v2(0, randY)), cc.fadeTo(2.5 + Math.random() * 2, 150));
+            var spawn2 = cc.spawn(cc.moveBy(1.5 + Math.random() * 2, cc.v2(0, -randY)), cc.fadeTo(1.5 + Math.random() * 2, 80));
+            nodeN.runAction(cc.repeatForever(cc.sequence(spawn1, spawn2)));
+        }
+
+    },
+
+
     //战争迷雾，用于控制雾，周围有非雾就显示label并且可点击
     fogOfWarSystem: function () {
-
+        // return;
         var hAndW = cc.dataMgr.getCurrentWidthAndHeight();
         var tileHeight = hAndW.h;
         var tileWidth = hAndW.w;
@@ -176,12 +201,12 @@ cc.Class({
                 //这个tile是否有雾
                 var isFogTile = otherTileJS.isFogTile();
                 if (isFogTile) {
-                    //上下左右是否有非雾
+                    //上下左右是否有草地
                     var isShowLabel = false;
-                    if ((i > 0 && !cc.dataMgr.tilesData[i - 1][j].getComponent('Tile').isFogTile())
-                        || (i < tileHeight - 1 && !cc.dataMgr.tilesData[i + 1][j].getComponent('Tile').isFogTile())
-                        || (j > 0 && !cc.dataMgr.tilesData[i][j - 1].getComponent('Tile').isFogTile())
-                        || (j < tileWidth - 1 && !cc.dataMgr.tilesData[i][j + 1].getComponent('Tile').isFogTile())) {
+                    if ((i > 0 && cc.dataMgr.tilesData[i - 1][j].getComponent('Tile').isGlassland())
+                        || (i < tileHeight - 1 && cc.dataMgr.tilesData[i + 1][j].getComponent('Tile').isGlassland())
+                        || (j > 0 && cc.dataMgr.tilesData[i][j - 1].getComponent('Tile').isGlassland())
+                        || (j < tileWidth - 1 && cc.dataMgr.tilesData[i][j + 1].getComponent('Tile').isGlassland())) {
                         isShowLabel = true;
                     }
                     var fog = otherTileJS.fog;
@@ -196,10 +221,47 @@ cc.Class({
                         labelNode.active = false;
                         btnNode.getComponent(cc.Button).interactable = false;
                     } else if (!isShowLabel && !labelNode.active) {
-                        
+
                     }
                 }
 
+            }
+        }
+    },
+
+    //草地系统，用于草地变色 自动描边
+    grassSystem: function () {
+        var hAndW = cc.dataMgr.getCurrentWidthAndHeight();
+        var tileHeight = hAndW.h;
+        var tileWidth = hAndW.w;
+        for (var i = 0; i < tileHeight; i++) {
+            for (var j = 0; j < tileWidth; j++) {
+                var otherTile = cc.dataMgr.tilesData[i][j];
+                var otherTileJS = otherTile.getComponent('Tile');
+                //1先判断这个块是不是想要的块，如果是 才设置草地
+                //2需要的信息是 块的上下左右是否有东西 没有就是0 有就是1 传入tile中
+                if (otherTileJS.dontWant == 0) {
+                    //用于标记上下左右的草是否显示
+                    var grassInfo = [0, 0, 0, 0];
+                    if (i < 1 || cc.dataMgr.tilesData[i - 1][j].getComponent('Tile').dontWant) {
+                        grassInfo[0] = 1;
+                    }
+
+                    if (i > tileHeight - 2 || cc.dataMgr.tilesData[i + 1][j].getComponent('Tile').dontWant) {
+                        grassInfo[1] = 1;
+                    }
+
+
+
+                    if (j > tileWidth - 2 || cc.dataMgr.tilesData[i][j + 1].getComponent('Tile').dontWant) {
+                        grassInfo[2] = 1;
+                    }
+
+                    if (j < 1 || cc.dataMgr.tilesData[i][j - 1].getComponent('Tile').dontWant) {
+                        grassInfo[3] = 1;
+                    }
+                }
+                otherTileJS.setGrassInfo(grassInfo);
             }
         }
     },
@@ -251,7 +313,10 @@ cc.Class({
                     // console.log('包含改触摸点的tile');
                     //console.log(cc.dataMgr.tilesData[i][j].getBoundingBoxToWorld());
                     //console.log(cc.dataMgr.tilesData[i][j]);
-                    return cc.dataMgr.tilesData[i][j];
+                    if (cc.dataMgr.tilesData[i][j].getComponent('Tile').dontWant == 0) {
+                        return cc.dataMgr.tilesData[i][j];
+                    }
+
                 }
             }
         }
@@ -316,6 +381,10 @@ cc.Class({
         //未知原因 块和脚本没有获得
         if (!t || !tJS) {
             debugger;
+            return;
+        }
+        //空块
+        if (tJS.dontWant == 1) {
             return;
         }
         //是雾
@@ -501,6 +570,8 @@ cc.Class({
                 this.dragonsNode.addChild(unionedThingsArray[i].thing);
 
                 cc.audioMgr.playEffect("dragon");
+
+                window.Notification.emit("EGG_TO_DRAGON");
             } else {
                 this.thingsNode.addChild(unionedThingsArray[i].thing);
                 var thingJs = unionedThingsArray[i].thing.getChildByName('selectedNode').getComponent('Thing');
@@ -513,6 +584,21 @@ cc.Class({
                 //花合成音
                 else if (unionedThingsArray[i].thingType == 2) {
                     cc.audioMgr.playEffect("flower");
+
+
+                    var reward = cc.dataMgr.getFlowerUnionRewardByLevel(unionedThingsArray[i].thingLevel);
+                    if (reward != null) {
+                        var tipsLabel = unionedThingsArray[i].thing.getChildByName("tipsNode").getChildByName("tipsLabel").getComponent(cc.Label);
+                        tipsLabel.string = "+" + reward + "精华";
+                        cc.dataMgr.addHeartCount(reward);
+                        this.ui.refreshUI();
+                        tipsLabel.node.getComponent(cc.Animation).play('tipsLabel');
+                    }
+
+
+
+
+                    window.Notification.emit("MERGE_FLOWER");
                 }
             }
         }
@@ -652,9 +738,22 @@ cc.Class({
     _generateUnionedThings: function (newLen, type, level) {
         var results = [];
 
+        var maxLevel = cc.dataMgr.getMaxLevelByType(type);
+
         while (newLen > 0) {
-            var remainder = newLen % 3;
-            newLen = Math.floor(newLen / 3);
+
+            var remainder = -1;
+            //最高级的情况下 不能再合并了，不然没有图片支持
+            if (level < maxLevel) {
+                remainder = newLen % 3;
+                newLen = Math.floor(newLen / 3);
+            } else {
+                remainder = newLen;
+                newLen = 0;
+            }
+
+            // var remainder = newLen % 3;
+            // newLen = Math.floor(newLen / 3);
 
             for (var i = 0; i < remainder; i++) {
 
