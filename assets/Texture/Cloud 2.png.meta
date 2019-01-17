@@ -1,14 +1,14 @@
 {
   "ver": "2.0.0",
-  "uuid": "ba4de188-0a4c-44af-8678-6504849162fc",
+  "uuid": "a6707581-fac3-4917-bd29-1ccd07ad6f17",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "subMetas": {
-    "MapSketch2_Retro_blurred": {
+    "Cloud 2": {
       "ver": "1.0.3",
-      "uuid": "6a4928be-dec4-4543-b962-f4670742ac38",
-      "rawTextureUuid": "ba4de188-0a4c-44af-8678-6504849162fc",
+      "uuid": "03e976c6-80f5-41f6-8865-c781739e7038",
+      "rawTextureUuid": "a6707581-fac3-4917-bd29-1ccd07ad6f17",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -16,10 +16,10 @@
       "offsetY": 0,
       "trimX": 0,
       "trimY": 0,
-      "width": 222,
-      "height": 512,
-      "rawWidth": 222,
-      "rawHeight": 512,
+      "width": 307,
+      "height": 156,
+      "rawWidth": 307,
+      "rawHeight": 156,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,
