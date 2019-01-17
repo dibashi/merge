@@ -939,9 +939,16 @@ export default class DataMgr extends cc.Component {
     };
 
     //获得用户该玩那一关了
-    getCurCheckpoint() {
+    getMaxCheckpoint() {
         var curCheckpoint = cc.sys.localStorage.getItem("curCheckpoint");
         return parseInt(curCheckpoint);
+    };
+
+    setMaxCheckpoint(curCp) {
+        var cp = this.getMaxCheckpoint();
+        if(cp<curCp) {
+            
+        }
     };
 
     _getCPRewardData() {
