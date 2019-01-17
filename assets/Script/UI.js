@@ -955,13 +955,4 @@ cc.Class({
 
         cc.find("Canvas/checkPointEndNode").getChildByName("checkPointEnd").active = false;
     },
-
-    goCheckpointList:function() {
-        cc.audioMgr.playEffect("UI");
-
-       
-        cc.uiMgr.Push("MapChooseFrame", { index: cc.dataMgr.getCurCheckpoint() - 1 });
-
-        cc.find("Canvas/checkPointEndNode").getChildByName("checkPointEnd").active = false;
-    },
 });
