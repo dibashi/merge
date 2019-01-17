@@ -83,6 +83,7 @@ cc.Class({
     },
 
     beginCheckpoint: function () {
+        cc.dataMgr.checkpointHeartCount = 0;
         this.targetLabel.string = "目标:" + cc.dataMgr.getDescByTarget(cc.dataMgr.checkpointDatas[this.curCheckpoint - 1].target);
         this.time = parseInt(cc.dataMgr.checkpointDatas[this.curCheckpoint - 1].time);
 

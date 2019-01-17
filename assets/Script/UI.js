@@ -540,6 +540,8 @@ cc.Class({
         this.closeUIForToturial();
         this.dandelionNode.active = true;
         this.hallNode.active = true;
+
+       
     },
 
     outCheckpointCompatible: function () {
@@ -548,6 +550,8 @@ cc.Class({
         this.dragonHome.node.parent.active = true;
 
         this.openUIForToturial();
+
+        
     },
 
     refreshDragonNestInfo: function () {

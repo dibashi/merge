@@ -71,6 +71,10 @@ cc.Class({
         //哪个物体被拖动，又移动到了屏幕边缘，在改变摄像机位置的时候，这个物体需要跟着位移 而不是停留在世界坐标系下
         this.draggingObj = null;
 
+       
+        //初始化最好写在start里面，我在别的地方有onload来初始化 Game里面的一些数据 比如tile里的onload
+        this.ui = cc.find("Canvas/uiLayer").getComponent('UI');
+
         if (!cc.dataMgr) {
             cc.dataMgr = new DataMgr();
             cc.dataMgr.init();
@@ -83,8 +87,6 @@ cc.Class({
             cc.audioMgr = new AudioMgr();
             cc.audioMgr.onLoad();
         }
-        //初始化最好写在start里面，我在别的地方有onload来初始化 Game里面的一些数据 比如tile里的onload
-        this.ui = cc.find("Canvas/uiLayer").getComponent('UI');
     },
 
     initDragons: function () {
@@ -204,7 +206,7 @@ cc.Class({
         //调用草地变色，与自动描边
         this.grassSystem();
 
-        
+        this.ui.refreshUI();
     },
 
 

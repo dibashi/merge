@@ -620,6 +620,11 @@ export default class DataMgr extends cc.Component {
 
     ];
 
+
+
+    //关卡内精华储存
+    checkpointHeartCount = 0;
+
     /**
      * 自己临时觉得好玩加的，龙在采集时说一些话，提示玩家游戏技巧或者给玩家一些目标暗示
      */
@@ -947,9 +952,9 @@ export default class DataMgr extends cc.Component {
 
 
     getCPRewardData(curCheckpoint) {
-       var datas = this._getCPRewardData();
-        return datas[curCheckpoint-1];
-      
+        var datas = this._getCPRewardData();
+        return datas[curCheckpoint - 1];
+
     };
 
     getCPRewardCount(curCheckpoint) {
@@ -957,10 +962,10 @@ export default class DataMgr extends cc.Component {
         var tempData = this.getCPRewardData(curCheckpoint);
         var lastDay = tempData.lastDay;
         var count = tempData.count;
-        if(curDay == lastDay) {
-           return 0;
+        if (curDay == lastDay) {
+            return 0;
         } else {
-            if(count == 0) {
+            if (count == 0) {
                 return cc.dataMgr.checkpointDatas[curCheckpoint - 1].first_Reward;
             } else {
                 return cc.dataMgr.checkpointDatas[curCheckpoint - 1].daily_Reward;
@@ -971,9 +976,9 @@ export default class DataMgr extends cc.Component {
     setCheckpointRewardDatas(curCheckpoint) {
         var curDate = this.getCurrentDay();
         var datas = this._getCPRewardData();
-        datas[curCheckpoint-1].count = parseInt(datas[curCheckpoint-1].count ) + 1;
-        datas[curCheckpoint-1].lastDay = curDate;
-        
+        datas[curCheckpoint - 1].count = parseInt(datas[curCheckpoint - 1].count) + 1;
+        datas[curCheckpoint - 1].lastDay = curDate;
+
         //console.log(datas);
         cc.sys.localStorage.setItem("checkpointRewardDatas", JSON.stringify(datas));
     };
@@ -1268,18 +1273,33 @@ export default class DataMgr extends cc.Component {
     };
 
     getHeartCount() {
-        var heartCount = cc.sys.localStorage.getItem("heartCount");
+        var heartCount;
+        if (this.isHall) {
+            heartCount = cc.sys.localStorage.getItem("heartCount");
+        } else {
+            heartCount = this.checkpointHeartCount;
+        }
+
 
         return parseInt(heartCount);
     };
 
     addHeartCount(count) {
-        var result = this.getHeartCount() + count;
-        cc.sys.localStorage.setItem("heartCount", result);
+
+        if (this.isHall) {
+            var result = this.getHeartCount() + count;
+            cc.sys.localStorage.setItem("heartCount", result);
+        } else {
+            this.checkpointHeartCount += count;
+        }
+
     };
 
     getCoinCount() {
+
         var coinCount = cc.sys.localStorage.getItem("coinCount");
+
+
         return parseInt(coinCount);
     };
 
