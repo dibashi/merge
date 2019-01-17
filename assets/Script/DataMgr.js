@@ -946,8 +946,8 @@ export default class DataMgr extends cc.Component {
 
     setMaxCheckpoint(curCp) {
         var cp = this.getMaxCheckpoint();
-        if(cp<curCp) {
-            
+        if(cp<curCp && curCp<=20) {
+            cc.sys.localStorage.setItem("curCheckpoint",curCp);
         }
     };
 

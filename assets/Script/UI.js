@@ -352,6 +352,8 @@ cc.Class({
         shareKuang.getChildByName("rewardLabel").getComponent(cc.Label).string = cc.dataMgr.getCPRewardCount(parseInt(eventData)) + "金币";
         shareKuang.getChildByName("levelLabel").getComponent(cc.Label).string = "第" + eventData + "关";
         
+    
+        this.checkpointListNode.getComponent("CheckpointList").dragonFly(eventData);
     },
 
     checkpoint_Desc_CancelClick:function() {
@@ -492,7 +494,7 @@ cc.Class({
 
     checkpointBtn: function () {
         console.log("checkpointBtn Click~");
-
+        cc.find("Canvas/checkPointEndNode").getChildByName("checkPointEnd").active = false;
         // cc.audioMgr.playEffect("UI");
 
 

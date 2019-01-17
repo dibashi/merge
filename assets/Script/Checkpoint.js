@@ -78,7 +78,7 @@ cc.Class({
         cc.find("Canvas/checkPointEndNode").getComponent(cc.Animation).play("checkPointSuccess");
         cc.dataMgr.addCoinCount(parseInt(this.rewardCount));
         cc.dataMgr.setCheckpointRewardDatas(this.curCheckpoint);
-
+        cc.dataMgr.setMaxCheckpoint(parseInt(this.curCheckpoint) + 1);
         this.ui.refreshUI();
     },
 
