@@ -498,28 +498,20 @@ cc.Class({
     checkpointBtn: function () {
         console.log("checkpointBtn Click~");
         cc.find("Canvas/checkPointEndNode").getChildByName("checkPointEnd").active = false;
-        // cc.audioMgr.playEffect("UI");
-
-
-        // //1，先播放一个动画，在动画的过程中删除 现存的 游戏地图
-        // //2,加载一个新的地图，开始游戏
-        // //首先要把主基地数据存起来
-        // cc.dataMgr.saveGameData();
-
-        // this.inCheckpointCompatible();
-        // //删除主基地
-        // //加载关卡内容
-        // this.game.clearGame();
-        // this.game.loadGame(1);
-
+        
         cc.audioMgr.playEffect("UI");
 
-        // this.checkpointLayer.active = true;
-        //cc.uiMgr.Push("MapChooseFrame", { index:  cc.dataMgr.getCurCheckpoint() - 1 })
         this.checkpointListNode.active  = true;
 
         var shareKuang = this.checkpointListNode.getChildByName("sharekuang");
         shareKuang.active =false;
+
+        // //不在hall中 要设置active 否则没法调用 onEnable，关卡初始化会存在bug
+        // if(!cc.dataMgr.isHall) {
+        //     this.game.clearGame();
+        // }
+
+        this.checkPointTips_Node.active = false;
     },
 
     hallBtn: function () {
