@@ -936,20 +936,25 @@ cc.Class({
     nextCheckpoint:function() {
         this.curCheckpoint++;
         cc.audioMgr.playEffect("UI");
+        if(this.curCheckpoint>=20) {
+            //this.hallBtn();
+            this.checkpointBtn();
+        } else {
+            cc.find("Canvas/loadingNode").getComponent(cc.Animation).play();
 
-        cc.find("Canvas/loadingNode").getComponent(cc.Animation).play();
-
-        this.checkPointTips_Node.getComponent("Checkpoint").setCurCheckpoint(this.curCheckpoint);
-        this.checkPointTips_Node.getComponent("Checkpoint").beginCheckpoint();
-        this.checkPointTips_Node.active = true;
+            this.checkPointTips_Node.getComponent("Checkpoint").setCurCheckpoint(this.curCheckpoint);
+            this.checkPointTips_Node.getComponent("Checkpoint").beginCheckpoint();
+            this.checkPointTips_Node.active = true;
+           
+           
+          
+            //删除主基地
+            //加载关卡内容
+            this.game.clearGame();
+            this.game.loadGame(this.curCheckpoint);
+    
+            cc.find("Canvas/checkPointEndNode").getChildByName("checkPointEnd").active = false;
+        }
        
-       
-      
-        //删除主基地
-        //加载关卡内容
-        this.game.clearGame();
-        this.game.loadGame(this.curCheckpoint);
-
-        cc.find("Canvas/checkPointEndNode").getChildByName("checkPointEnd").active = false;
     },
 });

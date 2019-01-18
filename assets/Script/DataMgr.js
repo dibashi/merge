@@ -652,12 +652,12 @@ export default class DataMgr extends cc.Component {
 
         {
             "id": 2,
-            "desc": "微型生命精华*1",
+            "desc": "微型生命之球*1",
         },
 
         {
             "id": 3,
-            "desc": "小生命精华*1",
+            "desc": "小生命之球*1",
         },
 
         {
@@ -672,22 +672,22 @@ export default class DataMgr extends cc.Component {
         { "id": 2, "time": 600, "target": 1, "first_Reward": 5, "daily_Reward": 1 },
         { "id": 3, "time": 600, "target": 2, "first_Reward": 5, "daily_Reward": 1 },
         { "id": 4, "time": 600, "target": 2, "first_Reward": 5, "daily_Reward": 1 },
-        { "id": 5, "time": 600, "target": 3, "first_Reward": 5, "daily_Reward": 1 },
-        { "id": 6, "time": 600, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
-        { "id": 7, "time": 180, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
-        { "id": 8, "time": 600, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
-        { "id": 9, "time": 360, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
-        { "id": 10, "time": 600, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
-        { "id": 11, "time": 300, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
-        { "id": 12, "time": 110, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
-        { "id": 13, "time": 80, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
-        { "id": 14, "time": 60, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
-        { "id": 15, "time": 600, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
-        { "id": 16, "time": 600, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
-        { "id": 17, "time": 600, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
-        { "id": 18, "time": 60, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
-        { "id": 19, "time": 60, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
-        { "id": 20, "time": 60, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
+        { "id": 5, "time": 80, "target": 3, "first_Reward": 5, "daily_Reward": 1 },
+        { "id": 6, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
+        { "id": 7, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
+        { "id": 8, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
+        { "id": 9, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
+        { "id": 10, "time": 180, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
+        { "id": 11, "time": 160, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
+        { "id": 12, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
+        { "id": 13, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
+        { "id": 14, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
+        { "id": 15, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
+        { "id": 16, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
+        { "id": 17, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
+        { "id": 18, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
+        { "id": 19, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
+        { "id": 20, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
     ];
 
 
