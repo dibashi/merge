@@ -154,7 +154,7 @@ cc.Class({
             type: cc.Button
         },
 
-        
+
 
         checkpointNode: {
             default: null,
@@ -171,9 +171,9 @@ cc.Class({
             type: cc.Node
         },
 
-        checkpointListNode:{
-            default:null,
-            type:cc.Node
+        checkpointListNode: {
+            default: null,
+            type: cc.Node
         }
     },
 
@@ -255,14 +255,14 @@ cc.Class({
         //     //2,加载一个新的地图，开始游戏
         //     //首先要把主基地数据存起来
         //     cc.dataMgr.saveGameData();
-           
+
         //     self.inCheckpointCompatible();
         //     //删除主基地
         //     //加载关卡内容
         //     self.game.clearGame();
         //     self.game.loadGame(data.idx);
-           
-          
+
+
         // });
 
 
@@ -336,60 +336,76 @@ cc.Class({
     },
 
 
-    closeCheckpointList:function() {
+    closeCheckpointList: function () {
         cc.audioMgr.playEffect("UI");
         this.checkpointListNode.active = false;
     },
 
-    checkpointDescClick:function(event,eventData) {
+    checkpointDescClick: function (event, eventData) {
         cc.audioMgr.playEffect("UI");
         var shareKuang = this.checkpointListNode.getChildByName("sharekuang");
-        shareKuang.active =true;
+        shareKuang.active = true;
 
         this.readyToCheckpointID = eventData;
         shareKuang.getChildByName("targetLabel").getComponent(cc.Label).string = cc.dataMgr.getDescByTarget(cc.dataMgr.checkpointDatas[parseInt(eventData) - 1].target);
-        shareKuang.getChildByName("timeLabel").getComponent(cc.Label).string = cc.dataMgr.checkpointDatas[parseInt(eventData) - 1].time +"秒";
+        shareKuang.getChildByName("timeLabel").getComponent(cc.Label).string = cc.dataMgr.checkpointDatas[parseInt(eventData) - 1].time + "秒";
         shareKuang.getChildByName("rewardLabel").getComponent(cc.Label).string = cc.dataMgr.getCPRewardCount(parseInt(eventData)) + "金币";
         shareKuang.getChildByName("levelLabel").getComponent(cc.Label).string = "第" + eventData + "关";
-        
-    
+
+
         this.checkpointListNode.getComponent("CheckpointList").dragonFly(eventData);
     },
 
-    checkpoint_Desc_CancelClick:function() {
+    checkpoint_Desc_CancelClick: function () {
         cc.audioMgr.playEffect("UI");
         var shareKuang = this.checkpointListNode.getChildByName("sharekuang");
-        shareKuang.active =false;
+        shareKuang.active = false;
     },
 
 
 
 
-    go_Checkpoint:function(event) {
-        
+    go_Checkpoint: function () {
+
         cc.audioMgr.playEffect("UI");
 
-        cc.find("Canvas/loadingNode").getComponent(cc.Animation).play();
+        cc.find("Canvas/loadingNode").getComponent(cc.Animation).play("loading2");
         this.curCheckpoint = this.readyToCheckpointID;
         this.checkPointTips_Node.getComponent("Checkpoint").setCurCheckpoint(this.readyToCheckpointID);
         this.checkPointTips_Node.active = true;
         //1，先播放一个动画，在动画的过程中删除 现存的 游戏地图
         //2,加载一个新的地图，开始游戏
         //首先要把主基地数据存起来
-        if(cc.dataMgr.isHall) {
+        if (cc.dataMgr.isHall) {
             cc.dataMgr.saveGameData();
         }
-      
-       
+
+
         this.inCheckpointCompatible();
         //删除主基地
         //加载关卡内容
-        this.game.clearGame();
-        this.game.loadGame(this.readyToCheckpointID);
+        // this.game.clearGame();
+        // this.game.loadGame(this.readyToCheckpointID);
 
         this.checkpointListNode.active = false;
-       
+
     },
+
+    hallBtn: function () {
+        console.log("hallBtn Click~");
+
+        cc.audioMgr.playEffect("UI");
+        this.checkPointTips_Node.active = false;
+        //动画帧事件 内部回调在 cloudLoading中 进行删除关卡与加载大厅操作
+        cc.find("Canvas/loadingNode").getComponent(cc.Animation).play("loading");
+        // cc.find("Canvas/maskNode").active  = true;
+        //this.scheduleOnce(this.clearAndLoadGame, 0.1);
+        this.outCheckpointCompatible();
+
+
+        cc.find("Canvas/checkPointEndNode").getChildByName("checkPointEnd").active = false;
+    },
+
 
 
     shareForCensorship: function () {
@@ -498,13 +514,13 @@ cc.Class({
     checkpointBtn: function () {
         console.log("checkpointBtn Click~");
         cc.find("Canvas/checkPointEndNode").getChildByName("checkPointEnd").active = false;
-        
+
         cc.audioMgr.playEffect("UI");
 
-        this.checkpointListNode.active  = true;
+        this.checkpointListNode.active = true;
 
         var shareKuang = this.checkpointListNode.getChildByName("sharekuang");
-        shareKuang.active =false;
+        shareKuang.active = false;
 
         // //不在hall中 要设置active 否则没法调用 onEnable，关卡初始化会存在bug
         // if(!cc.dataMgr.isHall) {
@@ -514,20 +530,15 @@ cc.Class({
         this.checkPointTips_Node.active = false;
     },
 
-    hallBtn: function () {
-        console.log("hallBtn Click~");
+   
+   
+    // clearAndLoadGame: function () {
+    //     //删除主基地
+    //     //加载关卡内容
 
-        cc.audioMgr.playEffect("UI");
-        this.checkPointTips_Node.active = false;
-        cc.find("Canvas/loadingNode").getComponent(cc.Animation).play();
-        this.outCheckpointCompatible();
-        //删除主基地
-        //加载关卡内容
-        this.game.clearGame();
-        this.game.loadGame(null);
-
-        cc.find("Canvas/checkPointEndNode").getChildByName("checkPointEnd").active = false;
-    },
+    //     // this.game.clearGame();
+    //     // this.game.loadGame(null);
+    // },
 
     inCheckpointCompatible: function () {
         this.unschedule(this.refreshDragonNestInfo);
@@ -538,7 +549,7 @@ cc.Class({
         this.dandelionNode.active = true;
         this.hallNode.active = true;
 
-       
+
     },
 
     outCheckpointCompatible: function () {
@@ -548,7 +559,7 @@ cc.Class({
 
         this.openUIForToturial();
 
-        
+
     },
 
     refreshDragonNestInfo: function () {
@@ -913,48 +924,48 @@ cc.Class({
 
     },
 
-    reCheckpoint:function() {
-        
+    reCheckpoint: function () {
+
         cc.audioMgr.playEffect("UI");
 
-        cc.find("Canvas/loadingNode").getComponent(cc.Animation).play();
+        cc.find("Canvas/loadingNode").getComponent(cc.Animation).play("loading2");
 
         this.checkPointTips_Node.getComponent("Checkpoint").setCurCheckpoint(this.curCheckpoint);
         this.checkPointTips_Node.getComponent("Checkpoint").beginCheckpoint();
         this.checkPointTips_Node.active = true;
-       
-       
-      
+
+
+
         //删除主基地
-        //加载关卡内容
-        this.game.clearGame();
-        this.game.loadGame(this.curCheckpoint);
+        // //加载关卡内容
+        // this.game.clearGame();
+        // this.game.loadGame(this.curCheckpoint);
 
         cc.find("Canvas/checkPointEndNode").getChildByName("checkPointEnd").active = false;
     },
 
-    nextCheckpoint:function() {
+    nextCheckpoint: function () {
         this.curCheckpoint++;
         cc.audioMgr.playEffect("UI");
-        if(this.curCheckpoint>=20) {
+        if (this.curCheckpoint >= 20) {
             //this.hallBtn();
             this.checkpointBtn();
         } else {
-            cc.find("Canvas/loadingNode").getComponent(cc.Animation).play();
+            cc.find("Canvas/loadingNode").getComponent(cc.Animation).play("loading2");
 
             this.checkPointTips_Node.getComponent("Checkpoint").setCurCheckpoint(this.curCheckpoint);
             this.checkPointTips_Node.getComponent("Checkpoint").beginCheckpoint();
             this.checkPointTips_Node.active = true;
-           
-           
-          
+
+
+
             //删除主基地
             //加载关卡内容
-            this.game.clearGame();
-            this.game.loadGame(this.curCheckpoint);
-    
+            // this.game.clearGame();
+            // this.game.loadGame(this.curCheckpoint);
+
             cc.find("Canvas/checkPointEndNode").getChildByName("checkPointEnd").active = false;
         }
-       
+
     },
 });

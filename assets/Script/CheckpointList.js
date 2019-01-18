@@ -38,7 +38,7 @@ cc.Class({
        
         this.curCp = cc.dataMgr.getMaxCheckpoint();
 
-        // this.curCp = 1;
+        // this.curCp = 20;
 
         for (var i = 0; i < this.levels.length; i++) {
             if (i >= this.curCp) {
