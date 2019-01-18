@@ -376,7 +376,10 @@ cc.Class({
         //1，先播放一个动画，在动画的过程中删除 现存的 游戏地图
         //2,加载一个新的地图，开始游戏
         //首先要把主基地数据存起来
-        cc.dataMgr.saveGameData();
+        if(cc.dataMgr.isHall) {
+            cc.dataMgr.saveGameData();
+        }
+      
        
         this.inCheckpointCompatible();
         //删除主基地
