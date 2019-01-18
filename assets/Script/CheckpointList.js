@@ -17,6 +17,11 @@ cc.Class({
         moveTips:{
             default:null,
             type:cc.Node
+        },
+
+        nodeCloud:{
+            default:null,
+            type:cc.Node
         }
 
     },
@@ -56,6 +61,8 @@ cc.Class({
         this.dragon.position = npos;
 
         this.moveToDragon();
+
+        this.cloudEffect();
     },
 
     dragonFly:function(clickCP) {
@@ -127,5 +134,18 @@ cc.Class({
             this.moveTips.position = cc.v2(300,0);
             this.moveTips.scaleX = -1;
         }
-    }
+    },
+
+    cloudEffect: function () {
+        //云特效：上下自动
+        for (let i = 0; i < this.nodeCloud.children.length; ++i) {
+            let nodeN = this.nodeCloud.children[i];
+            let randY = Math.random() * 40 + 15;
+
+            var spawn1 = cc.spawn(cc.moveBy(2.5 + Math.random() * 2, cc.v2(0, randY)), cc.fadeTo(2.5 + Math.random() * 2, 150));
+            var spawn2 = cc.spawn(cc.moveBy(1.5 + Math.random() * 2, cc.v2(0, -randY)), cc.fadeTo(1.5 + Math.random() * 2, 80));
+            nodeN.runAction(cc.repeatForever(cc.sequence(spawn1, spawn2)));
+        }
+
+    },
 });
