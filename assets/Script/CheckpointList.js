@@ -23,7 +23,7 @@ cc.Class({
 
 
     onEnable: function () {
-        this.dragon.scale = 1;
+        this.dragon.scaleX = -1;
 
        
         var curCp = cc.dataMgr.getMaxCheckpoint();
@@ -64,7 +64,7 @@ cc.Class({
         } else {
             this.dragon.scaleX = 1;
         }
-        var mt = cc.moveTo(1.5,this.levels[clickCP - 1].position);
+        var mt = cc.moveTo(1.5,pos);
         this.dragon.runAction(mt);
     },
 
