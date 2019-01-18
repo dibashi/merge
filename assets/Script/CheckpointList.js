@@ -12,6 +12,11 @@ cc.Class({
         levels: {
             default: [],
             type: cc.Node
+        },
+
+        moveTips:{
+            default:null,
+            type:cc.Node
         }
 
     },
@@ -26,12 +31,12 @@ cc.Class({
         this.dragon.scaleX = -1;
 
        
-        var curCp = cc.dataMgr.getMaxCheckpoint();
+        this.curCp = cc.dataMgr.getMaxCheckpoint();
 
-        var curCp = 20;
+        // this.curCp = 1;
 
         for (var i = 0; i < this.levels.length; i++) {
-            if (i >= curCp) {
+            if (i >= this.curCp) {
                 var c = this.levels[i].children;
                 for (var j = 0; j < c.length; j++) {
                     c[j].active = false;
@@ -45,10 +50,12 @@ cc.Class({
 
         }
 
-        var levelNode = this.levels[curCp - 1].getChildByName("levelNode");
+        var levelNode = this.levels[this.curCp - 1].getChildByName("levelNode");
         var wpos = levelNode.parent.convertToWorldSpaceAR(levelNode.position);
         var npos = levelNode.parent.parent.convertToNodeSpaceAR(wpos);
         this.dragon.position = npos;
+
+        this.moveToDragon();
     },
 
     dragonFly:function(clickCP) {
@@ -77,7 +84,48 @@ cc.Class({
 
 
 
+    //画面移动到龙的x位置
+    moveToDragon:function() {
+        // if(this.curCp == 1) {
+        //     this.node.getChildByName("scrollview").getComponent(cc.ScrollView).scrollToTop();
+        // } else if(this.curCp == 20) {
+        //     this.node.getChildByName("scrollview").getComponent(cc.ScrollView).scrollToBottom();
+        // } else {
+            
+        //     this.node.getChildByName("scrollview").getComponent(cc.ScrollView).scrollToOffset(this.dragon.position,1.0);
+        // }
+        var pos = cc.pAdd(this.dragon.position,cc.v2(-360,0));
+        this.node.getChildByName("scrollview").getComponent(cc.ScrollView).scrollToOffset(pos,1.0);
+    },
 
+    //0 代表 不用 移动
+    //1 代表 龙在左边
+    //2 代表 龙在右边
+    dragonWhere:function() {
 
+        var wpos = this.dragon.parent.convertToWorldSpaceAR(this.dragon.position);
+        if(wpos.x<-40) {
+            return 1;
+        } else if(wpos.x>760) {
+            return 2;
+        } else {
+            return 0;
+        }
+   
+    },
 
+    update(dt) {
+        var dir = this.dragonWhere();
+        if(dir == 0) {
+            this.moveTips.active = false;
+        } else if(dir == 1) {
+            this.moveTips.active = true;
+            this.moveTips.position = cc.v2(-300,0);
+            this.moveTips.scaleX = 1;
+        }  else if(dir == 2) {
+            this.moveTips.active = true;
+            this.moveTips.position = cc.v2(300,0);
+            this.moveTips.scaleX = -1;
+        }
+    }
 });
