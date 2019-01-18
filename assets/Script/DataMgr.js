@@ -15,7 +15,7 @@ const {
 @ccclass
 export default class DataMgr extends cc.Component {
     //以年月日 时分 来标记版本，目前只用于清空数据
-    version = "2019-01-11-1456";
+    version = "2019-01-18-1735";
 
     //是否播放音效和背景音乐
     playEffect = true;
@@ -673,18 +673,18 @@ export default class DataMgr extends cc.Component {
         { "id": 3, "time": 600, "target": 2, "first_Reward": 5, "daily_Reward": 1 },
         { "id": 4, "time": 600, "target": 2, "first_Reward": 5, "daily_Reward": 1 },
         { "id": 5, "time": 80, "target": 3, "first_Reward": 5, "daily_Reward": 1 },
-        { "id": 6, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
+        { "id": 6, "time": 400, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
         { "id": 7, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
-        { "id": 8, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
+        { "id": 8, "time": 360, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
         { "id": 9, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
-        { "id": 10, "time": 180, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
-        { "id": 11, "time": 160, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
+        { "id": 10, "time": 300, "target": 4, "first_Reward": 5, "daily_Reward": 2 },
+        { "id": 11, "time": 300, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
         { "id": 12, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
         { "id": 13, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
         { "id": 14, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
-        { "id": 15, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
-        { "id": 16, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
-        { "id": 17, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
+        { "id": 15, "time": 240, "target": 4, "first_Reward": 5, "daily_Reward": 3 },
+        { "id": 16, "time": 240, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
+        { "id": 17, "time": 240, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
         { "id": 18, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
         { "id": 19, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
         { "id": 20, "time": 120, "target": 4, "first_Reward": 5, "daily_Reward": 4 },
