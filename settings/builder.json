@@ -2,9 +2,7 @@
   "appKey": "",
   "appSecret": "",
   "encryptJs": true,
-  "excludeScenes": [
-    "2065ccbb-2c35-4a49-a6b5-851038208ce5"
-  ],
+  "excludeScenes": [],
   "fb-instant-games": {},
   "includeAnySDK": false,
   "includeSDKBox": false,
@@ -28,11 +26,11 @@
     "orientation": "portrait"
   },
   "renderMode": "0",
-  "startScene": "e2376e9e-4e2b-42d1-9c4d-ccd4a8f2e9ab",
+  "startScene": "78b5e499-ab95-4775-b325-ddad33ae3eec",
   "title": "merge",
   "webOrientation": "auto",
   "wechatgame": {
-    "REMOTE_SERVER_ROOT": "https://bpw.blyule.com/merge_1",
+    "REMOTE_SERVER_ROOT": "https://bpw.blyule.com/merge_2",
     "appid": "wxfece06b250c43b30",
     "isSubdomain": false,
     "orientation": "portrait",
