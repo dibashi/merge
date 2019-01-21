@@ -98,9 +98,9 @@ cc.Class({
             type: cc.SpriteFrame
         },
 
-        sayNode:{
-            default:null,
-            type:cc.Node
+        sayNode: {
+            default: null,
+            type: cc.Node
         }
     },
 
@@ -128,7 +128,7 @@ cc.Class({
                 this.progressNode.position = cc.v2(0, 190);
                 this.tipsNode.position = cc.v2(0, 190);
 
-                this.sayNode.position = cc.v2(0,240);
+                this.sayNode.position = cc.v2(0, 240);
 
             } else if (level == 3) {
                 this.dragonSpr.spriteFrame = this.dragon_3_spr;
@@ -143,7 +143,7 @@ cc.Class({
                 this.progressNode.position = cc.v2(0, 260);
                 this.tipsNode.position = cc.v2(0, 130);
 
-                this.sayNode.position = cc.v2(0,310);
+                this.sayNode.position = cc.v2(0, 310);
 
             } else if (level == 4) {
                 this.dragonSpr.spriteFrame = this.dragon_4_spr;
@@ -158,7 +158,7 @@ cc.Class({
                 this.progressNode.position = cc.v2(0, 300);
                 this.tipsNode.position = cc.v2(0, 130);
 
-                this.sayNode.position = cc.v2(0,350);
+                this.sayNode.position = cc.v2(0, 350);
 
             }
             // this.node.width = this.dragonSpr.spriteFrame._rect.width;
@@ -196,6 +196,23 @@ cc.Class({
         // this.lastDragonState = -1;
         // this.currentDragonState = 0;
         // this.dragonActionByState();
+
+        var fsm = StateMachine.create({
+
+            //龙初始 站立，默认动画 漂浮
+            initial: 'stand',
+
+            events: [
+                //move，从站立到移动到花
+                { name: 'move', from: 'stand', to: 'collection' },
+                //从采集（移动）到开始采集花
+                { name: 'work', from: 'collection', to: 'collectioning' },
+                //采集后 从采集 到携带 精华
+                { name: 'worked', from: 'collectioning', to: 'carry' },
+                //新采集任务 ： 要先扔下当前的精华
+                { name: 'new_work', from: 'carry', to: 'collection' }
+            ]
+        });
 
     },
 
@@ -321,12 +338,12 @@ cc.Class({
 
                 self.game.changeCameraPosition(touchpos, self.node);
 
-                
+
 
                 var maxLevel = cc.dataMgr.getMaxLevelByType(self.thingType);
-                if(self.thingLevel<maxLevel) {
-                   //以此龙的坐标为原点，半径为范围查找相交的龙，返回的是一个集合
-                self.curCanUnionedDragons = self.game.findCanUnionDragons(self.node);
+                if (self.thingLevel < maxLevel) {
+                    //以此龙的坐标为原点，半径为范围查找相交的龙，返回的是一个集合
+                    self.curCanUnionedDragons = self.game.findCanUnionDragons(self.node);
                 } else {
                     self.curCanUnionedDragons = [];
                 }
@@ -613,7 +630,7 @@ cc.Class({
         }
     },
 
-    thingMoveToOver: function (data,things) {
+    thingMoveToOver: function (data, things) {
         //debugger;
         console.log("生成物-->移动到目标位置！");
 
@@ -631,12 +648,12 @@ cc.Class({
         this.thingType = thingType;
         this.thingLevel = thingLevel;
         //debugger;
-        if(cc.dataMgr.isHall) {
+        if (cc.dataMgr.isHall) {
             this.strength = cc.dataMgr.getDragonStrength(thingLevel);
         } else {
             this.strength = 99999;
         }
-        
+
         this.settingSpriteFrame(this.thingType, this.thingLevel);
 
 
@@ -655,12 +672,12 @@ cc.Class({
 
     browseThisThing: function () {
         console.log('浏览该物体: ' + 'thing type: ' + this.thingType + ' thing level: ' + this.thingLevel + '  dragon　strength: ' + this.strength);
-        if(cc.dataMgr.isHall) {
+        if (cc.dataMgr.isHall) {
             this.ui.addDescForClick(this.thingType, this.thingLevel, this.strength);
         } else {
-            this.ui.addDescForClick(this.thingType, this.thingLevel,"无限");
+            this.ui.addDescForClick(this.thingType, this.thingLevel, "无限");
         }
-     
+
     },
 
     unBrowseThisThing: function () {
