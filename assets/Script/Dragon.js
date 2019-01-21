@@ -200,18 +200,29 @@ cc.Class({
         var fsm = StateMachine.create({
 
             //龙初始 站立，默认动画 漂浮
-            initial: 'stand',
+            initial: 's_stand',
 
-            events: [
+            transitions: [
                 //move，从站立到移动到花
-                { name: 'move', from: 'stand', to: 'collection' },
+                { name: 't_move', from: 's_stand', to: 's_collection' },
                 //从采集（移动）到开始采集花
-                { name: 'work', from: 'collection', to: 'collectioning' },
+                { name: 't_work', from: 's_collection', to: 's_collectioning' },
                 //采集后 从采集 到携带 精华
-                { name: 'worked', from: 'collectioning', to: 'carry' },
+                { name: 't_worked', from: 's_collectioning', to: 's_carry' },
                 //新采集任务 ： 要先扔下当前的精华
-                { name: 'new_work', from: 'carry', to: 'collection' }
-            ]
+                { name: 't_new_work', from: 's_carry', to: 's_collection' },
+                //被选中 从任意状态 到被选中
+                { name: 't_focus', from: 's_any', to: 's_selected' },
+            ],
+
+            methods: {
+                ont_move: function () { console.log('ont_move') },
+                ont_work: function () { console.log('ont_work') },
+                ont_worked: function () { console.log('ont_worked') },
+                ont_new_work: function () { console.log('ont_new_work') },
+                ont_focus: function () { console.log('ont_focus') }
+
+            }
         });
 
     },
