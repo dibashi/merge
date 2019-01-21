@@ -71,7 +71,7 @@ cc.Class({
         //哪个物体被拖动，又移动到了屏幕边缘，在改变摄像机位置的时候，这个物体需要跟着位移 而不是停留在世界坐标系下
         this.draggingObj = null;
 
-       
+
         //初始化最好写在start里面，我在别的地方有onload来初始化 Game里面的一些数据 比如tile里的onload
         this.ui = cc.find("Canvas/uiLayer").getComponent('UI');
 
@@ -134,36 +134,104 @@ cc.Class({
 
         //debugger;
         let self = this;
+
+        this.singleTouchID = -1;
         //只专注于移动摄像机，其它的触摸由各自节点接收并吞没
         this.node.on(cc.Node.EventType.TOUCH_START, function (event) {
-            //console.log('touch begin by game');
+            
+            if (self.singleTouchID == -1) {
+                self.singleTouchID = event.getID();
+            } else {
+                //已经被触摸设置了，那就不处理
+                return;
+            }
+
+
+
+
+
             let touchPos = event.getLocation();
-            // console.log(touchPos);
-            // console.log(cc.director.getVisibleSize());
+
             self._beginPos = touchPos;
 
 
             self.ui.clearDescForUnClick();
+            // }
+
 
         }, this.node);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, function (event) {
-            if (self._beginPos) {
-                //console.log('touch move by game');
-                let movePos = event.getLocation();
-                let addX = movePos.x - self._beginPos.x;
-                let addY = movePos.y - self._beginPos.y;
+            //if(self.isMutiPoint) {
 
-                //移动相机
+            var touches = event.getTouches();
 
-                let addPos = self.getAddPosition_v2(-addX, -addY)
-                self.camera.setPosition(cc.v2(self.camera.x + addPos.x, self.camera.y + addPos.y));
-                self._beginPos = movePos;
 
+            if (touches.length >= 2) {
+
+
+                console.log("hoho处理多点逻辑");
+                var touch1 = touches[0], touch2 = touches[1];
+                var delta1 = touch1.getDelta(), delta2 = touch2.getDelta();
+
+                var touchPoint1 = self.node.parent.convertToNodeSpaceAR(touch1.getLocation());
+                var touchPoint2 = self.node.parent.convertToNodeSpaceAR(touch2.getLocation());
+                //缩放
+                var distance = cc.pSub(touchPoint1, touchPoint2);
+                var delta = cc.pSub(delta1, delta2);
+                var scale = 1;
+                if (Math.abs(distance.x) > Math.abs(distance.y)) {
+                    scale = (distance.x + delta.x) / distance.x * self.camera.getComponent(cc.Camera).zoomRatio;
+                }
+                else {
+                    scale = (distance.y + delta.y) / distance.y * self.camera.getComponent(cc.Camera).zoomRatio;
+                }
+                //self.target.scale = scale < 0.1 ? 0.1 : scale;
+                self.camera.getComponent(cc.Camera).zoomRatio = cc.clampf(scale, 0.5, 1.0);
 
             }
+            else {
+                if (event.getID() != self.singleTouchID) {
+                    return;
+                }
 
-        }, this.node);
+                if (self._beginPos) {
+                    //console.log('touch move by game');
+                    let movePos = event.getLocation();
+                    let addX = movePos.x - self._beginPos.x;
+                    let addY = movePos.y - self._beginPos.y;
 
+                    //移动相机
+
+                    let addPos = self.getAddPosition_v2(-addX, -addY)
+                    self.camera.setPosition(cc.v2(self.camera.x + addPos.x, self.camera.y + addPos.y));
+                    self._beginPos = movePos;
+
+
+                }
+            }
+
+
+
+
+            }, this.node);
+
+            this.node.on(cc.Node.EventType.TOUCH_END, function (event) {
+            
+                if (event.getID() != self.singleTouchID) {
+                    return;
+                }
+                self.singleTouchID = -1;
+            }, this.node);
+           
+            this.node.on(cc.Node.EventType.TOUCH_CANCEL, function (event) {
+            
+                if (event.getID() != self.singleTouchID) {
+                    return;
+                }
+                self.singleTouchID = -1;
+                
+            }, this.node);
+           
     },
 
 
@@ -188,7 +256,7 @@ cc.Class({
             this.initDragons();
 
         } else {
-           
+
             cc.dataMgr.isHall = false;
             this.mapNode = cc.instantiate(this.maps[tag]);
         }
@@ -200,7 +268,7 @@ cc.Class({
         this.thingsNode.position = this.mapNode.position;
         this.dragonsNode.position = this.mapNode.position;
 
-        this.camera.position = cc.v2(0,0);
+        this.camera.position = cc.v2(0, 0);
         //虽然很迷你，但本质上就是战争迷雾系统
         this.fogOfWarSystem();
         //调用草地变色，与自动描边
@@ -240,7 +308,7 @@ cc.Class({
                 var otherTileJS = otherTile.getComponent('Tile');
                 //这个tile是否有雾
                 var isFogTile = otherTileJS.isFogTile();
-                
+
                 if (isFogTile) {
                     hasFog = true;
                     //上下左右是否有草地
@@ -270,7 +338,7 @@ cc.Class({
             }
         }
 
-        if(!hasFog) {
+        if (!hasFog) {
             window.Notification.emit("ALL_FOG_CLEAR");
         }
     },
@@ -286,10 +354,10 @@ cc.Class({
                 var otherTileJS = otherTile.getComponent('Tile');
                 //1先判断这个块是不是想要的块，如果是 才设置草地
                 //2需要的信息是 块的上下左右是否有东西 没有就是0 有就是1 传入tile中
-                 //用于标记上下左右的草是否显示
-                 var grassInfo = [0, 0, 0, 0];
+                //用于标记上下左右的草是否显示
+                var grassInfo = [0, 0, 0, 0];
                 if (otherTileJS.dontWant == 0) {
-                   
+
                     if (i < 1 || cc.dataMgr.tilesData[i - 1][j].getComponent('Tile').dontWant) {
                         grassInfo[0] = 1;
                     }
@@ -628,11 +696,11 @@ cc.Class({
                 if (unionedThingsArray[i].thingType == 1) {
                     cc.audioMgr.playEffect("heart");
 
-                    if(unionedThingsArray[i].thingLevel == 1) {
+                    if (unionedThingsArray[i].thingLevel == 1) {
                         window.Notification.emit("HEART_1");
                     }
 
-                    if(unionedThingsArray[i].thingLevel == 2) {
+                    if (unionedThingsArray[i].thingLevel == 2) {
                         window.Notification.emit("HEART_2");
                     }
                 }
@@ -655,11 +723,11 @@ cc.Class({
 
                     window.Notification.emit("MERGE_FLOWER");
 
-                    if(unionedThingsArray[i].thingLevel == 2) {
+                    if (unionedThingsArray[i].thingLevel == 2) {
                         window.Notification.emit("FLOWER_2");
                     }
 
-                    if(unionedThingsArray[i].thingLevel == 3) {
+                    if (unionedThingsArray[i].thingLevel == 3) {
                         window.Notification.emit("FLOWER_3");
                     }
                 }
