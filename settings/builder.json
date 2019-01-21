@@ -28,7 +28,7 @@
   "renderMode": "0",
   "startScene": "78b5e499-ab95-4775-b325-ddad33ae3eec",
   "title": "merge",
-  "webOrientation": "auto",
+  "webOrientation": "portrait",
   "wechatgame": {
     "REMOTE_SERVER_ROOT": "https://bpw.blyule.com/merge_2",
     "appid": "wxfece06b250c43b30",
