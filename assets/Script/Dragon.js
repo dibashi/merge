@@ -200,19 +200,27 @@ cc.Class({
         var fsm = StateMachine.create({
 
             //龙初始 站立，默认动画 漂浮
-            initial: 's_stand',
+            initial: 's_Idle',
 
             transitions: [
                 //move，从站立到移动到花
-                { name: 't_move', from: 's_stand', to: 's_collection' },
-                //从采集（移动）到开始采集花
-                { name: 't_work', from: 's_collection', to: 's_collectioning' },
+                { name: 'toMove', from: 's_Idle', to: 's_Moving' },
+                //从移动到开始采集花
+                { name: 'toCollection', from: 's_Moving', to: 's_Collectioning' },
                 //采集后 从采集 到携带 精华
-                { name: 't_worked', from: 's_collectioning', to: 's_carry' },
-                //新采集任务 ： 要先扔下当前的精华
-                { name: 't_new_work', from: 's_carry', to: 's_collection' },
-                //被选中 从任意状态 到被选中
-                { name: 't_focus', from: 's_any', to: 's_selected' },
+                { name: 'toCarry', from: 's_Collectioning', to: 's_Carrying' },
+                //扔下当前的精华
+                { name: 'toPut', from: 's_Carrying', to: 's_Putting' },
+                //放置后 置为idle态
+                { name: 'toIdle', from: 's_Putting', to: 's_Idle' },
+                //从idle态 到即将合并态
+                { name: 'toMerge', from: 's_Idle', to: 's_Merging' },
+
+                //从移动态 到睡觉态
+                { name: 'toSleep', from: 's_Moving', to: 's_Sleeping' },
+
+                //从苏醒态 到idle
+                { name: 'wakingToIdle', from: 's_Waking', to: 's_Idle' },
             ],
 
             methods: {
