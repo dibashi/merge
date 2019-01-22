@@ -1,3 +1,17 @@
+var stateOfDraggon = {
+    idle: 0,
+    moving: 1,
+    collecting: 2,
+    carrying: 3,
+    putting: 4,
+    merging: 5,
+    dragging: 6,
+    sleeping: 7,
+    waking: 8
+};
+
+
+
 //！！！这个脚本挂在了Thing prefab下的 selectedNode上 一定要注意！！！
 cc.Class({
     extends: cc.Component,
@@ -98,9 +112,9 @@ cc.Class({
             type: cc.SpriteFrame
         },
 
-        sayNode:{
-            default:null,
-            type:cc.Node
+        sayNode: {
+            default: null,
+            type: cc.Node
         }
     },
 
@@ -128,7 +142,7 @@ cc.Class({
                 this.progressNode.position = cc.v2(0, 190);
                 this.tipsNode.position = cc.v2(0, 190);
 
-                this.sayNode.position = cc.v2(0,240);
+                this.sayNode.position = cc.v2(0, 240);
 
             } else if (level == 3) {
                 this.dragonSpr.spriteFrame = this.dragon_3_spr;
@@ -143,7 +157,7 @@ cc.Class({
                 this.progressNode.position = cc.v2(0, 260);
                 this.tipsNode.position = cc.v2(0, 130);
 
-                this.sayNode.position = cc.v2(0,310);
+                this.sayNode.position = cc.v2(0, 310);
 
             } else if (level == 4) {
                 this.dragonSpr.spriteFrame = this.dragon_4_spr;
@@ -158,7 +172,7 @@ cc.Class({
                 this.progressNode.position = cc.v2(0, 300);
                 this.tipsNode.position = cc.v2(0, 130);
 
-                this.sayNode.position = cc.v2(0,350);
+                this.sayNode.position = cc.v2(0, 350);
 
             }
             // this.node.width = this.dragonSpr.spriteFrame._rect.width;
@@ -191,39 +205,61 @@ cc.Class({
         //是否在往花身上移动的状态
         this.movingToFlowerState = false;
 
-        //龙的状态： 0 默认寻路 1 被点击   2  采集  3 合并提示态
-        //每次的状态更新 都要调用 此脚本的状态改变函数
-        // this.lastDragonState = -1;
-        // this.currentDragonState = 0;
-        // this.dragonActionByState();
+
+        this.curState = stateOfDraggon.idle;
 
     },
 
-    //麻烦先废弃
-    // dragonActionByState: function () {
-    //     if (this.currentDragonState != this.lastDragonState) {
-    //         this.lastDragonState = this.currentDragonState;
-    //         switch (this.currentDragonState) {
-    //             case 0:
 
-    //                 break;
-    //             case 1:
+    toIdleState:function(curState) {
 
-    //                 break;
-    //             case 2:
+    },
 
-    //                 break;
-    //             case 3:
+   
 
-    //                 break;
 
-    //             default:
-    //                 console.log("什么态也不是？不可能");
-    //                 debugger;
-    //                 break;
-    //         }
-    //     }
-    //},
+    changeState: function (state) {
+        if (this.curState != state) {
+
+            switch (state) {
+                case stateOfDraggon.idle:
+                    if(this.curState!==stateOfDraggon.sleeping) {
+                        this.toIdleState(this.curState);
+                    }
+                    break;
+                case stateOfDraggon.moving:
+
+                    break;
+                case stateOfDraggon.collecting:
+
+                    break;
+                case stateOfDraggon.carrying:
+
+                    break;
+                case stateOfDraggon.putting:
+
+                    break;
+                case stateOfDraggon.merging:
+
+                    break;
+                case stateOfDraggon.dragging:
+
+                    break;
+                case stateOfDraggon.sleeping:
+
+                    break;
+
+                case stateOfDraggon.waking:
+
+                    break;
+
+                default:
+                    console.log("什么态也不是？不可能");
+                    debugger;
+                    break;
+            }
+        }
+    },
 
     start: function () {
         // console.log("dragon start");
@@ -244,6 +280,7 @@ cc.Class({
         var curTouchX = 0.0;
         this.node.on(cc.Node.EventType.TOUCH_START, function (event) {
             self.ratio = self.game.camera.getComponent(cc.Camera).zoomRatio;
+            self.changeState(stateOfDraggon.dragging);
             //console.log('touch begin by flower');
             self.browseThisThing();
             event.stopPropagation();
@@ -321,12 +358,12 @@ cc.Class({
 
                 self.game.changeCameraPosition(touchpos, self.node);
 
-                
+
 
                 var maxLevel = cc.dataMgr.getMaxLevelByType(self.thingType);
-                if(self.thingLevel<maxLevel) {
-                   //以此龙的坐标为原点，半径为范围查找相交的龙，返回的是一个集合
-                self.curCanUnionedDragons = self.game.findCanUnionDragons(self.node);
+                if (self.thingLevel < maxLevel) {
+                    //以此龙的坐标为原点，半径为范围查找相交的龙，返回的是一个集合
+                    self.curCanUnionedDragons = self.game.findCanUnionDragons(self.node);
                 } else {
                     self.curCanUnionedDragons = [];
                 }
@@ -613,7 +650,7 @@ cc.Class({
         }
     },
 
-    thingMoveToOver: function (data,things) {
+    thingMoveToOver: function (data, things) {
         //debugger;
         console.log("生成物-->移动到目标位置！");
 
@@ -631,12 +668,12 @@ cc.Class({
         this.thingType = thingType;
         this.thingLevel = thingLevel;
         //debugger;
-        if(cc.dataMgr.isHall) {
+        if (cc.dataMgr.isHall) {
             this.strength = cc.dataMgr.getDragonStrength(thingLevel);
         } else {
             this.strength = 99999;
         }
-        
+
         this.settingSpriteFrame(this.thingType, this.thingLevel);
 
 
@@ -655,12 +692,12 @@ cc.Class({
 
     browseThisThing: function () {
         console.log('浏览该物体: ' + 'thing type: ' + this.thingType + ' thing level: ' + this.thingLevel + '  dragon　strength: ' + this.strength);
-        if(cc.dataMgr.isHall) {
+        if (cc.dataMgr.isHall) {
             this.ui.addDescForClick(this.thingType, this.thingLevel, this.strength);
         } else {
-            this.ui.addDescForClick(this.thingType, this.thingLevel,"无限");
+            this.ui.addDescForClick(this.thingType, this.thingLevel, "无限");
         }
-     
+
     },
 
     unBrowseThisThing: function () {
