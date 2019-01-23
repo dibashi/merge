@@ -189,8 +189,7 @@ cc.Class({
         this.underpan.active = false;
         this.collectionThing.active = false;
 
-        //标记是否处理 按钮点击事件
-        this.selectClickFlag = true;
+
         //搜索到的附近 同类型参与合并的龙
         this.dragonArray = null;
 
@@ -200,8 +199,7 @@ cc.Class({
         this.curCanUnionedDragons = null;
         this.lastCanUnionedDragons = null;
 
-        //是否在采集状态
-        this.collectionState = false;
+        
         //是否在往花身上移动的状态
         this.movingToFlowerState = false;
 
@@ -211,21 +209,80 @@ cc.Class({
     },
 
 
-    toIdleState:function(curState) {
+    toIdleState: function () {
+        if (this.curState !== stateOfDraggon.sleeping) {
+
+
+
+
+            if (self.movingToFlowerState) {
+                self.node.stopActionByTag(self.node.moveActionTag);
+                self.movingToFlowerState = false;
+            }
+
+
+            switch (this.curState) {
+
+
+                case stateOfDraggon.moving:
+                    this.node.stopActionByTag(this.node.moveActionTag);
+
+                    break;
+
+                case stateOfDraggon.collecting:
+                this.collectionInterrupt();
+                    break;
+
+
+
+                case stateOfDraggon.carrying:
+                    this.collectionThingClick();
+                    break;
+
+                case stateOfDraggon.putting:
+                    this.collectionThingClick();
+                    //这里需要关闭 putting动画 转为idle动画
+                    break;
+
+                case stateOfDraggon.waking:
+                    this.collectionThingClick();
+                    break;
+
+                case stateOfDraggon.dragging:
+                    this.collectionThingClick();
+                    break;
+
+                case stateOfDraggon.merging:
+                    this.collectionThingClick();
+                    break;
+                default:
+                    break;
+            }
+
+
+            this.curState = stateOfDraggon.idle;
+        }
 
     },
 
-   
+    toDraggingState: function () {
+
+        this.browseThisThing();
+        this.curState = stateOfDraggon.dragging;
+    },
+
+
 
 
     changeState: function (state) {
+        //当前状态和要改变状态不一样 才切换状态
         if (this.curState != state) {
 
             switch (state) {
                 case stateOfDraggon.idle:
-                    if(this.curState!==stateOfDraggon.sleeping) {
-                        this.toIdleState(this.curState);
-                    }
+
+                    this.toIdleState();
+
                     break;
                 case stateOfDraggon.moving:
 
@@ -243,7 +300,10 @@ cc.Class({
 
                     break;
                 case stateOfDraggon.dragging:
-
+                    this.toIdleState();
+                    if (this.curState === stateOfDraggon.idle) {
+                        this.toDraggingState();
+                    }
                     break;
                 case stateOfDraggon.sleeping:
 
@@ -281,32 +341,25 @@ cc.Class({
         this.node.on(cc.Node.EventType.TOUCH_START, function (event) {
             self.ratio = self.game.camera.getComponent(cc.Camera).zoomRatio;
             self.changeState(stateOfDraggon.dragging);
-            //console.log('touch begin by flower');
-            self.browseThisThing();
-            event.stopPropagation();
-            cc.audioMgr.playEffect("btn_click");
-            //如果有生成物，需要放置生成物
-            if (self.collectionThing.active) {
-                self.collectionThingClick();
-            }
 
-            if (self.movingToFlowerState) {
-                self.node.stopActionByTag(self.node.moveActionTag);
-                self.movingToFlowerState = false;
-            }
+            if (self.curState === stateOfDraggon.dragging) {
+                event.stopPropagation();
+                cc.audioMgr.playEffect("btn_click");
 
-            //摄像机下的触摸点 需要转换为 世界坐标
-            let touchPos = event.getLocation();
-            lastTouchX = touchPos.x;
-            var worldTouchPos = self.game.camera.getComponent(cc.Camera).getCameraToWorldPoint(touchPos);
-            //console.log(touchPos);
-            self._beginPos = worldTouchPos;
-            //物体的世界坐标 触摸点也是世界坐标，做差值得到偏移值
-            var worldPosition = self.node.parent.convertToWorldSpaceAR(self.node.position);
-            self._offset = cc.pSub(worldPosition, worldTouchPos);
-            //必然有物体，因为这个节点就是物体
-            //显示tips
-            self.underpan.active = true;
+
+                //摄像机下的触摸点 需要转换为 世界坐标
+                let touchPos = event.getLocation();
+                lastTouchX = touchPos.x;
+                var worldTouchPos = self.game.camera.getComponent(cc.Camera).getCameraToWorldPoint(touchPos);
+                //console.log(touchPos);
+                self._beginPos = worldTouchPos;
+                //物体的世界坐标 触摸点也是世界坐标，做差值得到偏移值
+                var worldPosition = self.node.parent.convertToWorldSpaceAR(self.node.position);
+                self._offset = cc.pSub(worldPosition, worldTouchPos);
+                //必然有物体，因为这个节点就是物体
+                //显示tips
+                self.underpan.active = true;
+            }
 
         }, this.node);
 
@@ -314,15 +367,11 @@ cc.Class({
         var dnAction1 = cc.scaleTo(0.2, -1, 1);
         var dnAction2 = cc.scaleTo(0.2, 1, 1);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, function (event) {
-            if (self._beginPos) {
-                // console.log('touch move by flower');
-                self.closeSelectClick();
+            if (self.curState === stateOfDraggon.dragging) {
+               
                 event.stopPropagation();
 
-                if (self.collectionState == true) {
-                    self.collectionInterrupt();
-                }
-
+               
 
 
                 //点击跟随 触摸点
@@ -435,21 +484,7 @@ cc.Class({
         //cc.dataMgr.debugTileInfo();
     },
 
-    selectClick: function () {
-        if (this.selectClickFlag) {
-            console.log('选择dragon 按钮 被点击');
-        }
 
-        //console.log('thingType:  ' + this.thingType + '  ' + 'thingLevel:  ' + this.thingLevel);
-    },
-
-    closeSelectClick: function () {
-        this.selectClickFlag = false;
-    },
-
-    openSelectClick: function () {
-        this.selectClickFlag = true;
-    },
 
     playCollection: function (flowerLevel) {
         if (this.strength <= 0) {
@@ -471,9 +506,7 @@ cc.Class({
 
 
         this.node.getChildByName("progressNode").runAction(this.myProgressTo_act(needTime, 1.0, 0.0));
-        // var heartLevel = cc.dataMgr.getCollectionHeartLevel(flowerLevel);
-
-        // this.generateHeartAndPlace(heartLevel);
+      
 
         var rSayIndex = Math.floor(Math.random() * cc.dataMgr.saySomethingByDragon.length);
         this.sayNode.getComponent(cc.Label).string = cc.dataMgr.saySomethingByDragon[rSayIndex];
@@ -588,19 +621,14 @@ cc.Class({
 
     collectionThingClick: function () {
         console.log('生成物被点击！');
-        //var pos = this.node.parent.convertToNodeSpaceAR(this.node.position);
+
 
         var pos = this.node.position;
         //这引擎真垃圾，传参文档是劝退的，弄成成员变量了！！
         this.resultTiles = this.game.getNearestTileByN_pos(pos, 1);
         //console.log("是不是上面卡？");
         if (this.resultTiles != null) {
-            //有空格 移入棋盘
-            //debugger;
-            //console.log(this.resultTiles[0]);
-            //this.collectionThingOriginPos  = this.collectionThing.position;
-            //在thingsNode层创建一个 图片 让他移动到tile的位置 然后删除它，创建prefab的thing 放入
-            //之所以这样，是因为龙身上的图片移动过程中 移动龙会造成bug，因为那是他的子节点，现在分开了
+
             var moveThing = cc.instantiate(this.collectionThing);
             // debugger;
             var thingsNode = this.node.parent.parent.getChildByName('thingsNode');
@@ -636,9 +664,6 @@ cc.Class({
         else {
             //debugger;
             console.log("没有空格：直接转换为货币，飞入UI部分");
-            // var worldpos = this.collectionThing.parent.convertToWorldSpaceAR(this.collectionThing.position);
-            // var camerapos = cc.v2(worldpos.x - this.game.camera.position.x, worldpos.y - this.game.camera.position.y);
-
 
             var m = this.game.camera.getComponent(cc.Camera).getNodeToCameraTransform(this.collectionThing);
 
