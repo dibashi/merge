@@ -234,7 +234,7 @@ cc.Class({
 
 
 
-        var dragonNode = this.node.getChildByName('dragonNode');
+        var dragonNode = this.node.getChildByName('dragonAni');
         if (!this.game) {
             debugger;
         }
@@ -425,7 +425,7 @@ cc.Class({
         console.log('龙开始采集了。。。');
         this.collectionState = true;
         this.node.getChildByName("progressNode").active = true;
-        this.node.getChildByName('dragonNode').getComponent(cc.Animation).play("dragonCollection");
+        this.node.getChildByName('dragonAni').getChildByName('dragonNode').getComponent(cc.Animation).play("dragonCollection");
         this.unschedule(this.collectionOver);
         var needTime = cc.dataMgr.getNeedTimeByFlowerLevel(flowerLevel);
 
@@ -453,7 +453,7 @@ cc.Class({
         var pos = tileNode.position;
         var worldpos = tileNode.parent.convertToWorldSpaceAR(pos);
         pos.y += 150;
-        var dragonNode = this.node.getChildByName('dragonNode');
+        var dragonNode = this.node.getChildByName('dragonAni');
         if (this.node.x > pos.x) {
             dragonNode.scaleX = 1;
         } else {
@@ -482,7 +482,7 @@ cc.Class({
 
     collectionInterrupt: function () {
         this.unschedule(this.collectionOver);
-        this.node.getChildByName('dragonNode').getComponent(cc.Animation).play("dragonDefault");
+        this.node.getChildByName('dragonAni').getChildByName('dragonNode').getComponent(cc.Animation).play("dragonDefault");
         this.node.getChildByName("progressNode").active = false;
         this.collectionState = false;
         this.currentFlowerLevel = null;
@@ -510,10 +510,10 @@ cc.Class({
 
         //var camerapos = cc.v2(worldpos.x - this.game.camera.position.x, worldpos.y - this.game.camera.position.y);
 
-        var m = this.game.camera.getComponent(cc.Camera).getNodeToCameraTransform(this.node.getChildByName('dragonNode'));
+        var m = this.game.camera.getComponent(cc.Camera).getNodeToCameraTransform(this.node.getChildByName('dragonAni'));
 
         var camerapos = cc.v2();
-        camerapos = cc.pointApplyAffineTransform(this.node.getChildByName('dragonNode').position, m);
+        camerapos = cc.pointApplyAffineTransform(this.node.getChildByName('dragonAni').position, m);
 
         var level = this.thingLevel;
 
