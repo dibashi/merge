@@ -138,7 +138,7 @@ cc.Class({
         this.singleTouchID = -1;
         //只专注于移动摄像机，其它的触摸由各自节点接收并吞没
         this.node.on(cc.Node.EventType.TOUCH_START, function (event) {
-            
+
             if (self.singleTouchID == -1) {
                 self.singleTouchID = event.getID();
             } else {
@@ -213,25 +213,25 @@ cc.Class({
 
 
 
-            }, this.node);
+        }, this.node);
 
-            this.node.on(cc.Node.EventType.TOUCH_END, function (event) {
-            
-                if (event.getID() != self.singleTouchID) {
-                    return;
-                }
-                self.singleTouchID = -1;
-            }, this.node);
-           
-            this.node.on(cc.Node.EventType.TOUCH_CANCEL, function (event) {
-            
-                if (event.getID() != self.singleTouchID) {
-                    return;
-                }
-                self.singleTouchID = -1;
-                
-            }, this.node);
-           
+        this.node.on(cc.Node.EventType.TOUCH_END, function (event) {
+
+            if (event.getID() != self.singleTouchID) {
+                return;
+            }
+            self.singleTouchID = -1;
+        }, this.node);
+
+        this.node.on(cc.Node.EventType.TOUCH_CANCEL, function (event) {
+
+            if (event.getID() != self.singleTouchID) {
+                return;
+            }
+            self.singleTouchID = -1;
+
+        }, this.node);
+
     },
 
 
@@ -275,8 +275,96 @@ cc.Class({
         this.grassSystem();
 
         this.ui.refreshUI();
+
+        this.unschedule(this.autoCollection);
+        this.schedule(this.autoCollection, 10);
     },
 
+
+    autoCollection: function () {
+        console.log("龙自动采集");
+
+        var draggon = this.findCanCollectionDraggon();
+        if (draggon) {
+            var draggonJS = draggon.getComponent('Dragon');
+            //找朵可以采集的花
+            //1获得此龙可采集的花的集合 这些花必须没有被拖动
+            var flowers = this.getCanCollectionFlowers(draggonJS.thingLevel);
+            // console.log(flowers);
+            // debugger;
+            //2按级别最高，距离最短 双目标排序
+            var sortedFlowers = this.sortFlowersByLevelAndDistance(flowers,draggon.position);
+            //3找到那个花，然后找到对应的tile
+            if (sortedFlowers[0]) {
+                draggonJS.moveAndCollectioning(sortedFlowers[0].getComponent("Thing").relationTileJS.node);
+            }
+
+        }
+    },
+
+    //传入一条龙的级别，返回整个tile层中 可以采集的花（node类型）
+    getCanCollectionFlowers: function (level) {
+        var hAndW = cc.dataMgr.getCurrentWidthAndHeight(this.checkpointID);
+        var tileHeight = hAndW.h;
+        var tileWidth = hAndW.w;
+        // debugger;
+        var resultFlowers = [];
+        for (var i = 0; i < tileHeight; i++) {
+            for (var j = 0; j < tileWidth; j++) {
+                var otherTile = cc.dataMgr.tilesData[i][j];
+                var otherTileJS = otherTile.getComponent('Tile');
+               
+                if (otherTileJS.dontWant == 0 &&otherTileJS.tileType == 0) {
+
+                    //有thing 且类型是花
+                    if (otherTileJS.thing != null) {
+                        var thingJS = otherTileJS.thing.getChildByName('selectedNode').getComponent('Thing');
+                        if (thingJS.thingType == 2) {
+                            var minLevel = cc.dataMgr.getCollectionMinDragonLevel(thingJS.thingLevel);
+                            if (minLevel == null) {
+                                continue;
+                            }
+                            else if (minLevel <= level) {
+                                resultFlowers.push(thingJS.node);
+                            }
+                            else {
+                                continue;
+                            }
+
+                        }
+                    }
+                }
+
+
+            }
+        }
+
+        return resultFlowers;
+
+    },
+
+    //根据级别排序，若级别相同，根据距离排序，用于对自动采集的龙搜索一条不错的花。
+    sortFlowersByLevelAndDistance:function(flowers,pos) {
+        flowers.sort(function(f1,f2){
+            var f1js = f1.getComponent("Thing");
+            var f2js = f2.getComponent("Thing");
+            if(f1js.thingLevel>f2js.thingLevel) {
+                return -1;
+            } else if(f1js.thingLevel<f2js.thingLevel) {
+                return 1;
+            } else {
+                //历史原因 花的脚本是挂在thing节点下的selectNode上，所以位置一直都是(0,0),用其父节点的位置即可
+                var f1Dis = cc.pSub(f1.parent.position,pos).magSqr();
+                var f2Dis = cc.pSub(f2.parent.position,pos).magSqr();
+                if(f1Dis<=f2Dis) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
+        return flowers;
+    },
 
 
     cloudEffect: function () {
