@@ -990,9 +990,7 @@ export default class DataMgr extends cc.Component {
         cc.sys.localStorage.setItem("checkpointRewardDatas", JSON.stringify(datas));
     };
 
-    setCurCheckpoint() {
-
-    };
+    
 
     getDescByTarget(target) {
 
