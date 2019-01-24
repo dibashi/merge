@@ -15,7 +15,7 @@ const {
 @ccclass
 export default class DataMgr extends cc.Component {
     //以年月日 时分 来标记版本，目前只用于清空数据
-    version = "2019-01-18-1735";
+    version = "2019-01-24-1116";
 
     //是否播放音效和背景音乐
     playEffect = true;
@@ -1116,6 +1116,10 @@ export default class DataMgr extends cc.Component {
         cc.sys.localStorage.removeItem("shareDay");
 
         cc.sys.localStorage.removeItem("toturialCurStep");
+    
+    
+        cc.sys.localStorage.removeItem("curCheckpoint");
+        cc.sys.localStorage.removeItem("checkpointRewardDatas");
     }
 
     addToturialStep(count) {

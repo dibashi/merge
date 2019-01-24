@@ -54,7 +54,7 @@ cc.Class({
             }
 
         }
-
+        console.log(this.curCp);
         var levelNode = this.levels[this.curCp - 1].getChildByName("levelNode");
         var wpos = levelNode.parent.convertToWorldSpaceAR(levelNode.position);
         var npos = levelNode.parent.parent.convertToNodeSpaceAR(wpos);
