@@ -277,7 +277,7 @@ cc.Class({
         this.ui.refreshUI();
 
         this.unschedule(this.autoCollection);
-        this.schedule(this.autoCollection, 10);
+        this.schedule(this.autoCollection, cc.dataMgr.autoCollectionPeriod);
     },
 
 

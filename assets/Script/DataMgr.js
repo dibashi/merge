@@ -42,6 +42,9 @@ export default class DataMgr extends cc.Component {
     hallTileWidth = 15;
     hallTileHeight = 20;
 
+    //龙自动采集算法的 调用周期
+    autoCollectionPeriod = 10;
+
     //各个关卡宽高
     checkpointsWAndH = [
         {
